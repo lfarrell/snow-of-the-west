@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Visualization of the Snow Levels of the Western United States" />
+    <meta name="keywords" content="Climate Change,Drought,Visualization,Snow,Western Snow,
+    California Snow Visualizations,California" />
+    <title>Snow Water Equivalence</title>
+    <link href="https://fonts.googleapis.com/css?family=Abhaya+Libre|Alegreya|Taviraj" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div id="note" class="row">
+        <p id="load" class="text-center">Loading ...</p>
+    </div>
+    <div class="row hide">
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <h1 class="text-center">Snow Water Equivalence</h1>
+            <h3 class="text-center">A Look at Snowfall Across the Western United States</h3>
+        </div>
+    </div>
+    <div class="row charts opaque">
+        <div class="col-xs-12 col-offset-sm-1 col-sm-10 col-lg-offset-1 col-lg-10">
+            <p>Snow is vital to economic and environmental well being of the American West. Most of the west receives
+            less than 20 inches of moisture a year. 20 inches is considered the threshold for farming without the need for irrigation.
+            Some of the most productive agricultural regions of the west receive far less. For example, California's Imperial
+            Valley typically receives about two inches of rainfall a year. The only way farming is possible there is water piped
+            from the Colorado River, largely snow melt.</p>
+            <p>Given the paucity of rainfall snow is the major provider of year round water. It tends to accrue over the winter and slowly
+                melt as temperatures rise in the spring. The melt typically continues into the early summer, providing
+                a steady, consistent level of water in mountain watersheds.</p>
+            <p>Snow comes in a variety of forms. Depending on the air temperature, it can be light and airy, almost dry, or it can heavy and dense. For example,
+                light, fluffy  powder snow that measures four feet in depth might actually have the
+                same volume of water as denser, more compacted snow that is three feet deep.To account
+                for this variation a measure called
+                <a href="http://www.nrcs.usda.gov/wps/portal/nrcs/detail/or/snow/?cid=nrcs142p2_046155"
+                   target="_blank">snow water equivalence</a> is used to normalize the amount of liquid water
+                in a given level of snow.</p>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <h2 class="text-center"><span id="year-note">Snow Average</span> by Year (in inches)</h2>
+            <div class="text-center">
+                <div class="btn-group" role="group" aria-label="snow by year buttons">
+                    <button id="year-sm" type="button" class="btn btn-default">Snow Mean</button>
+                    <button id="year-smd" type="button" class="btn btn-default">Snow Median</button>
+                    <button id="year-wm" type="button" class="btn btn-default">Water Mean</button>
+                    <button id="year-wmd" type="button" class="btn btn-default">Water Median</button>
+                </div>
+            </div>
+            <div class="col-lg-4" id="az"></div>
+            <div class="col-lg-4" id="ca"></div>
+            <div class="col-lg-4" id="wy"></div>
+        </div>
+        <div id="year" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <svg id="year-legend" class="col-xs-12 col-offset-sm-1 col-sm-12 col-lg-offset-2 col-lg-10"></svg>
+
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <h2 class="text-center"><span id="states_cal-note">Snow Average</span> by Date (in inches)</h2>
+            <div class="text-center">
+                <div class="btn-group" role="group" aria-label="snow by date buttons">
+                    <button id="date-sm" type="button" class="btn btn-default">Snow Mean</button>
+                    <button id="date-smd" type="button" class="btn btn-default">Snow Median</button>
+                    <button id="date-wm" type="button" class="btn btn-default">Water Mean</button>
+                    <button id="date-wmd" type="button" class="btn btn-default">Water Median</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="states_cal" class="col-sm-12 col-lg-12">
+            <svg id="states_cal-legend" class="col-xs-12 col-sm-12 col-lg-offset-2 col-lg-10"></svg>
+        </div>
+        <div class="row hide">
+            <div class="col-xs-12 col-sm-12 col-lg-12">
+                <h2 class="text-center bigger">Watersheds</h2>
+
+                <div class="col-xs-12 col-offset-sm-1 col-sm-10 col-lg-offset-1 col-lg-10" id="basin_text">
+                    <p>More moisture tends to fall the further north you go in California, resulting in more opportunity
+                        for snowfall. This is partially offset by the fact that the Sierra Nevada tend to increase
+                        in elevation the further south you go. So that any precipitation that does fall in the south
+                        is more likely to fall as snow. Moisture also increases as elevation increases. As air rises
+                        it grows cooler and drier, dumping any available moisture. Parts of the Sierras receive the equivalent
+                        of 50 inches of rainfall a year. Contrast this with Los Angeles which typically receives about 15 inches
+                        of rainfall in an average year.</p>
+                    <p>Nonetheless, the southern Sierra has been particularly lacking in moisture over the last few years.
+                        Far fewer storms than normal have come in off the Pacific, along with higher temperatures, have
+                        resulted in a decreased snow pack.</p>
+                    <p>The April 1st average is a key metric in California snow measurement. It represents the point
+                        of maximum snow accumulation. While it is possible for further snowfall to occur snow levels tend to
+                        decline from this point forward. The percentage of April 1st averages below is a measure of the average
+                        of all stations at the given elevation. While not directly comparing April to April levels, it serves
+                        as a useful measure to compare relative snow levels from year to year across elevations.</p>
+                    <p>Select a basin to see its location, snow and snow/water equivalent levels over the 21st century.</p>
+                </div>
+                <div class="col-sm-offset-4 col-sm-4 col-lg-offset-4 col-lg-4">
+                    <select id="river" name="river" class="form-control">
+                        <option value="">--Select Watershed--</option>
+                        <option value="American">American River</option>
+                        <option value="Eel">Eel River</option>
+                        <option value="Feather">Feather River</option>
+                        <option value="Kaweah">Kaweah River</option>
+                        <option value="Kern">Kern River</option>
+                        <option value="Kings">Kings River</option>
+                        <option value="Lk Tahoe">Lake Tahoe</option>
+                        <option value="McCloud">McCloud River</option>
+                        <option value="Merced">Merced River</option>
+                        <option value="Mokelumne">Mokelumne River</option>
+                        <option value="Mono Lk">Mono Lake</option>
+                        <option value="Owens">Owens River</option>
+                        <option value="Pit">Pit River</option>
+                        <option value="Sacramento">Sacramento River</option>
+                        <option value="San Joaquin">San Joaquin River</option>
+                        <option value="Scott">Scott River</option>
+                        <option value="Shasta">Shasta River</option>
+                        <option value="Stanislaus">Stanislaus River</option>
+                        <option value="Stony Cr">Stony Creek</option>
+                        <option value="Susan">Susan River</option>
+                        <option value="Trinity">Trinity River</option>
+                        <option value="Truckee">Truckee River</option>
+                        <option value="Tule">Tule River</option>
+                        <option value="Tuolumne">Tuolumne River</option>
+                        <option value="Walker">Walker River</option>
+                        <option value="Yuba">Yuba River</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <h2 class="text-center"><span id="river_name">American River Basin</span>
+                    (<span id="river_year_chart-note">Snow Average</span> by Year in Inches)</h2>
+                <div class="text-center">
+                    <div id="rivers" class="btn-group" role="group" aria-label="snow by river buttons">
+                        <button id="river-sp-feather" type="button" class="btn btn-default">Snow %</button>
+                        <button id="river-sm-feather" type="button" class="btn btn-default">Snow Mean</button>
+                        <button id="river-smd-feather" type="button" class="btn btn-default">Snow Median</button>
+                        <button id="river-wm-feather" type="button" class="btn btn-default">Water Mean</button>
+                        <button id="river-wmd-feather" type="button" class="btn btn-default">Water Median</button>
+                    </div>
+                    <p>Snow and snow/water equivalent levels are in inches.</p>
+                    <p id="bump">Snow percentage is percentage of April 1st average, as discussed above.</p>
+                </div>
+                <svg id="river_year_chart-legend" class="col-xs-12 col-sm-12 col-lg-offset-2 col-lg-10"></svg>
+            </div>
+            <div id="map" class="col-sm-4 col-lg-3"></div>
+            <div id="river_year_chart" class="col-sm-8 col-lg-8"></div>
+            <div class="col-xs-12 col-offset-sm-1 col-sm-10 col-lg-offset-1 col-lg-10">
+                <p>Note: All basin maps should be considered the approximate extent of the given watershed.</p>
+                <p>Note: The Sacramento River is one of California's major rivers. Many of the other rivers in the
+                    state eventually terminate into it. The basin map given is for the Sacramento's headwaters.</p>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            <footer>
+                <ul class="list-unstyled">
+                    <li><a href="../index.php">Other Visualizations</a></li>
+                    <li><a href="../western_water">Western Water</a></li>
+                    <li><a href="mailto:farrelldlfarrell@gmail.com">Email</a></li>
+                    <li><a href="https://twitter.com/farrelldlfarrel">Twitter</a></li>
+                </ul>
+            </footer>
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            <div class="col-md-offset-1 subfooter">
+                <h3 class="text-center">Data Sources</h3>
+                <ul class="list-unstyled text-center">
+                    <li><a href="http://wcc.sc.egov.usda.gov/nwcc/rgrpt">USDA - Natural Resources Conservation Service (Snow Levels)</a></li>
+                    <li><a href="http://www.nrcs.usda.gov/wps/portal/nrcs/detail/nh/home/?cid=stelprdb1254126">USDA - Natural Resources Conservation Service (Colorado River Basin Map)</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.7/d3.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.9.0/d3-legend.min.js"></script>
+<script src="js/d3-jetpack-v4.min.js"></script>
+<!-- <script src="js/assets/swoopy-drag/swoopy-drag.min.js"></script>-->
+<script src="js/custom.js"></script>
+<script type="text/javascript">
+   /* var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-47256145-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })(); */
+</script>
+</body>
+</html>

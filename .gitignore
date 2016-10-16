@@ -2,3 +2,6 @@
 .DS_Store
 data/*
 raw_data/*
+state_data/*
+group/node_modules/*
+js/maps/*

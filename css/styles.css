@@ -1,0 +1,131 @@
+body {
+     font-family: 'Abhaya Libre', serif;
+    /* font-family: 'Taviraj', serif;
+     font-family: 'Alegreya', serif;*/
+    background-color: rgb(37, 37, 35);
+    /*   background-color: #1A1110; */
+    color: white;
+}
+
+#load {
+    font-size: 4em;
+}
+
+.bigger {
+    font-size: 3em;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+h1 {
+    text-transform: uppercase;
+    font-size: 4em;
+}
+
+#bump {
+    margin: -5px 0 10px 0;
+}
+
+.annotations path{
+    fill: none;
+    stroke: white;
+}
+
+.annotations text {
+    font-size: 12px;
+}
+
+#arrow {
+    fill: white;
+    stroke: white;
+}
+
+.charts {
+    margin-top: 50px;
+}
+
+.averages h4 {
+    display: inline-block;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    padding: 5px;
+    shape-rendering: crispEdges;
+    stroke: none;
+}
+
+#map path,
+#map line {
+    stroke: white;
+}
+
+text {
+    stroke: white;
+    fill: white;
+}
+
+text.label {
+    font-size: 85%;
+    stroke: none;
+}
+
+.opaque {
+    opacity: 0;
+}
+
+.lower {
+    margin-top: 25px;
+}
+
+.btn-group {
+    margin-bottom: 20px;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, .6);
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+div.tooltip ul {
+    list-style-type: none;
+    padding: 1% 0 1% 3%;
+}
+
+a, a:visited, a:hover {
+    color: orange;
+}
+
+circle {
+    fill: steelblue;
+}
+
+footer {
+    margin-top: 25px;
+}
+
+footer ul {
+    text-align: center;
+}
+
+footer ul li {
+    display: inline;
+    margin-left: 25px;
+    font-size: 1.4em;
+}
+
+.subfooter {
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
