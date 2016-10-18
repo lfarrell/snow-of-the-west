@@ -53,8 +53,6 @@ h1 {
 .axis path,
 .axis line {
     fill: none;
-    padding: 5px;
-    shape-rendering: crispEdges;
     stroke: none;
 }
 
@@ -64,7 +62,6 @@ h1 {
 }
 
 text {
-    stroke: white;
     fill: white;
 }
 
