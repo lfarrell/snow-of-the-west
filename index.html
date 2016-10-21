@@ -40,6 +40,22 @@
                    target="_blank">snow water equivalence</a> is used to normalize the amount of liquid water
                 in a given level of snow.</p>
         </div>
+        <div class="col-sm-offset-4 col-sm-4 col-lg-offset-4 col-lg-4">
+            <select id="state-list" name="state-list" class="form-control">
+                <option value="">--Select State--</option>
+                <option value="AZ">Arizona</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="ID">Idaho</option>
+                <option value="MT">Montana</option>
+                <option value="NV">Nevada</option>
+                <option value="NM">New Mexico</option>
+                <option value="OR">Oregon</option>
+                <option value="UT">Utah</option>
+                <option value="WA">Washington</option>
+                <option value="WY">Wyoming</option>
+            </select>
+        </div>
         <div class="col-xs-12 col-sm-12 col-lg-12">
             <h2 class="text-center"><span id="year-note">Snow Average</span> by Year (in inches)</h2>
             <div class="text-center">
@@ -51,9 +67,10 @@
                 </div>
             </div>
         </div>
-        <div id="year" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <svg id="year-legend" class="col-xs-12 col-offset-sm-1 col-sm-12 col-lg-offset-2 col-lg-10"></svg>
-
+            <div id="year" class="col-xs-12 col-sm-12 col-md-6 col-lg-6"></div>
+            <div id="temp" class="col-xs-12 col-sm-12 col-md-6 col-lg-6"></div>
         </div>
 
         <div class="col-xs-12 col-sm-12 col-lg-12">
@@ -93,62 +110,6 @@
                         as a useful measure to compare relative snow levels from year to year across elevations.</p>
                     <p>Select a basin to see its location, snow and snow/water equivalent levels over the 21st century.</p>
                 </div>
-                <div class="col-sm-offset-4 col-sm-4 col-lg-offset-4 col-lg-4">
-                    <select id="river" name="river" class="form-control">
-                        <option value="">--Select Watershed--</option>
-                        <option value="American">American River</option>
-                        <option value="Eel">Eel River</option>
-                        <option value="Feather">Feather River</option>
-                        <option value="Kaweah">Kaweah River</option>
-                        <option value="Kern">Kern River</option>
-                        <option value="Kings">Kings River</option>
-                        <option value="Lk Tahoe">Lake Tahoe</option>
-                        <option value="McCloud">McCloud River</option>
-                        <option value="Merced">Merced River</option>
-                        <option value="Mokelumne">Mokelumne River</option>
-                        <option value="Mono Lk">Mono Lake</option>
-                        <option value="Owens">Owens River</option>
-                        <option value="Pit">Pit River</option>
-                        <option value="Sacramento">Sacramento River</option>
-                        <option value="San Joaquin">San Joaquin River</option>
-                        <option value="Scott">Scott River</option>
-                        <option value="Shasta">Shasta River</option>
-                        <option value="Stanislaus">Stanislaus River</option>
-                        <option value="Stony Cr">Stony Creek</option>
-                        <option value="Susan">Susan River</option>
-                        <option value="Trinity">Trinity River</option>
-                        <option value="Truckee">Truckee River</option>
-                        <option value="Tule">Tule River</option>
-                        <option value="Tuolumne">Tuolumne River</option>
-                        <option value="Walker">Walker River</option>
-                        <option value="Yuba">Yuba River</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 col-lg-12">
-                <h2 class="text-center"><span id="river_name">American River Basin</span>
-                    (<span id="river_year_chart-note">Snow Average</span> by Year in Inches)</h2>
-                <div class="text-center">
-                    <div id="rivers" class="btn-group" role="group" aria-label="snow by river buttons">
-                        <button id="river-sp-feather" type="button" class="btn btn-default">Snow %</button>
-                        <button id="river-sm-feather" type="button" class="btn btn-default">Snow Mean</button>
-                        <button id="river-smd-feather" type="button" class="btn btn-default">Snow Median</button>
-                        <button id="river-wm-feather" type="button" class="btn btn-default">Water Mean</button>
-                        <button id="river-wmd-feather" type="button" class="btn btn-default">Water Median</button>
-                    </div>
-                    <p>Snow and snow/water equivalent levels are in inches.</p>
-                    <p id="bump">Snow percentage is percentage of April 1st average, as discussed above.</p>
-                </div>
-                <svg id="river_year_chart-legend" class="col-xs-12 col-sm-12 col-lg-offset-2 col-lg-10"></svg>
-            </div>
-            <div id="map" class="col-sm-4 col-lg-3"></div>
-            <div id="river_year_chart" class="col-sm-8 col-lg-8"></div>
-            <div class="col-xs-12 col-offset-sm-1 col-sm-10 col-lg-offset-1 col-lg-10">
-                <p>Note: All basin maps should be considered the approximate extent of the given watershed.</p>
-                <p>Note: The Sacramento River is one of California's major rivers. Many of the other rivers in the
-                    state eventually terminate into it. The basin map given is for the Sacramento's headwaters.</p>
             </div>
         </div>
         <div class="col-sm-12 col-lg-12">
