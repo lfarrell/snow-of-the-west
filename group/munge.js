@@ -7,26 +7,26 @@ var stringify = require('csv-stringify');
 var base = '../data';
 var text_format = d3.format(".01f");
 
-/*fs.readdir(base, function(err, files) {
+fs.readdir(base, function(err, files) {
     files.forEach(function(file) {
         if(/csv$/.test(file)) {
             fs.readFile(base + '/all.csv', 'utf8', function(e, rows) {
                 var data = d3.csv.parse(rows);
-                var snow_depth_values = data.filter(function(d) {
+            /*    var snow_depth_values = data.filter(function(d) {
                     return d.snow_depth !== '';
                 });
 
                 var snow_water_values = data.filter(function(d) {
                     return d.snow_water !== '';
-                });
+                }); */
 
                 var snow_el_month = d3.nest()
                     .key(function(d) { return d.el_level; })
                     .key(function(d) { return d.month; })
                     .rollup(function(values) {
-                        return valueList(values, "snow_depth");
+                        return valueList(values);
                     })
-                    .entries(snow_depth_values);
+                    .entries(data);
 
                 var snow_flat = flattenTwo(snow_el_month);
 
@@ -35,9 +35,9 @@ var text_format = d3.format(".01f");
                     .key(function(d) { return d.el_level; })
                     .key(function(d) { return d.month; })
                     .rollup(function(values) {
-                        return valueList(values, "snow_depth");
+                        return valueList(values);
                     })
-                    .entries(snow_depth_values);
+                    .entries(data);
 
                 var state_snow_flat = flattenThree(state_snow_el_month);
 
@@ -47,13 +47,13 @@ var text_format = d3.format(".01f");
                     .key(function(d) { return d.year; })
                     .key(function(d) { return d.month; })
                     .rollup(function(values) {
-                        return valueList(values, "snow_depth");
+                        return valueList(values);
                     })
-                    .entries(snow_depth_values);
+                    .entries(data);
 
                 var state_snow_date_flat = flattenFour(state_snow_el_year_month);
 
-                var water_el_month = d3.nest()
+           /*     var water_el_month = d3.nest()
                     .key(function(d) { return d.el_level; })
                     .key(function(d) { return d.month; })
                     .rollup(function(values) {
@@ -84,18 +84,17 @@ var text_format = d3.format(".01f");
                     })
                     .entries(snow_water_values);
 
-                var state_water_date_flat = flattenFour(state_water_el_year_month);
+                var state_water_date_flat = flattenFour(state_water_el_year_month); */
 
-                var file_names = ['sem', 'ssem', 'ssd', 'wem', 'swem', 'swd'];
+                var file_names = ['el_month', 'stat_el_month', 'state_el_year_month'];
 
                 var options = {header: true,
-                    columns: [ 'state', 'el_level', 'year', 'month', 'mean', 'median', 'type']
+                    columns: [ 'state', 'el_level', 'year', 'month', 'snow_mean', 'snow_median', 'water_mean', 'water_median']
                 };
 
-                [snow_flat, state_snow_flat, state_snow_date_flat,
-                    water_flat, state_water_flat, state_water_date_flat].forEach(function(d, i) {
+                [snow_flat, state_snow_flat, state_snow_date_flat].forEach(function(d, i) {
                     stringify(d, options, function(e, output){
-                        fs.writeFile(file_names[i] + '.csv', output, function(err) {
+                        fs.writeFile('updated/' + file_names[i] + '.csv', output, function(err) {
                             console.log(err)
                         });
                     });
@@ -111,14 +110,15 @@ var text_format = d3.format(".01f");
                                 el_level: d.key,
                                 year: '',
                                 month:e.key,
-                                mean: text_format(e.values.mean),
-                                median: text_format(e.values.median),
-                                type: e.values.type
+                                snow_mean: text_format(e.values.snow_mean),
+                                snow_median: text_format(e.values.snow_median),
+                                water_mean: text_format(e.values.water_mean),
+                                water_median: text_format(e.values.water_median)
                             });
                         });
                     });
 
-                    return _.sortByAll(flat, ['state', 'el_level', 'month']);
+                    return _.sortByAll(flat, ['el_level', 'month']);
                 }
 
                 function flattenThree(nested_group) {
@@ -132,9 +132,10 @@ var text_format = d3.format(".01f");
                                     el_level: e.key,
                                     year: '',
                                     month: f.key,
-                                    mean: text_format(f.values.mean),
-                                    median: text_format(f.values.median),
-                                    type: f.values.type
+                                    snow_mean: text_format(f.values.snow_mean),
+                                    snow_median: text_format(f.values.snow_median),
+                                    water_mean: text_format(f.values.water_mean),
+                                    water_median: text_format(f.values.water_median)
                                 });
                             })
                         })
@@ -155,9 +156,10 @@ var text_format = d3.format(".01f");
                                         el_level: e.key,
                                         year: f.key,
                                         month: g.key,
-                                        mean: text_format(g.values.mean),
-                                        median: text_format(g.values.median),
-                                        type: g.values.type
+                                        snow_mean: text_format(g.values.snow_mean),
+                                        snow_median: text_format(g.values.snow_median),
+                                        water_mean: text_format(g.values.water_mean),
+                                        water_median: text_format(g.values.water_median)
                                     });
                                 });
                             });
@@ -167,19 +169,27 @@ var text_format = d3.format(".01f");
                     return _.sortByAll(flat, ['state', 'el_level', 'year', 'month']);
                 }
 
-                function valueList(values, field) {
-                    var type = /water/.test(field) ? "water" : "snow";
+                function valueList(values) {
                     return {
-                        mean : d3.mean(values, function(d) {return d[field] }),
-                        median : d3.median(values, function(d) {return d[field]; }),
-                        type : type
+                        snow_mean : d3.mean(values, function(d) {
+                            if(d.snow_depth !== '') return d.snow_depth; else return; 
+                        }),
+                        snow_median : d3.median(values, function(d) {
+                            if(d.snow_depth !== '') return d.snow_depth; else return;
+                        }),
+                        water_mean: d3.mean(values, function(d) {
+                            if(d.snow_water !== '') return d.snow_water; else return;
+                        }),
+                        water_median: d3.median(values, function(d) {
+                            if(d.snow_water !== '') return d.snow_water; else return
+                        })
                     };
                 }
             });
         }
     });
-}); */
-
+});
+/*
 fs.readFile('all_temps.csv', 'utf8', function(e, values) {
     var data = d3.csv.parse(values);
 
@@ -193,7 +203,6 @@ fs.readFile('all_temps.csv', 'utf8', function(e, values) {
         .entries(data);
 
     var flatten = flattenThree(type_rollup);
-    console.log(flattenThree(type_rollup));
 
     var options = {header: true,
         columns: [ 'type', 'state', 'month', 'value', 'anomaly', 'avg']
@@ -233,4 +242,4 @@ fs.readFile('all_temps.csv', 'utf8', function(e, values) {
 
         return _.sortByAll(flat, ['type', 'state', 'month']);
     }
-});
+}); */

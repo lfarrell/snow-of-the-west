@@ -60,6 +60,22 @@ h1 {
     stroke: white;
 }
 
+#temp_line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2;
+}
+
+.overlay {
+    fill: none;
+    pointer-events: all;
+}
+
+.focus line {
+    stroke: white;
+    stroke-width: 2;
+}
+
 #map path,
 #map line {
     stroke: white;
