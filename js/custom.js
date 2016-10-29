@@ -51,25 +51,29 @@ d3.queue()
             return d.type === 'temp';
         });
 
-        var temps_west = d3.nest()
-            .key(function(d) { return d.month; })
-            .rollup(function(values) {
-                return {
-                    hist_avg: num_format(d3.mean(values, function(d) { return d.value - d.anomaly; })),
-                    actual: num_format(d3.mean(values, function(d) { return d.value; })),
-                    value: num_format(d3.mean(values, function(d) {return d.anomaly; }))
-                }
-            })
-            .entries(all_temp);
+        var all_precip = temps.filter(function(d) {
+            return d.type === 'precip';
+        });
+
+        var all_max = temps.filter(function(d) {
+            return d.type === 'max';
+        });
+
+        var temps_west = tempRollup(all_temp);
+        var precip_west = tempRollup(all_precip);
+        var max_west = tempRollup(all_max);
 
         temps_west.forEach(function(d) {
             d.date = parse_month_date(d.key);
         });
 
-        var bisectDate = d3.bisector(function(d) { return d.date; }).right;
+        precip_west.forEach(function(d) {
+            d.date = parse_month_date(d.key);
+        });
 
         var svg = d3.select("#year").append("svg");
         var temp_svg = d3.select("#temp").append("svg");
+        var precip_svg = d3.select("#precip").append("svg");
 
         var render = _.debounce(function() {
             var screen_width = (window.innerWidth - margins.right - margins.left) / 2.5;
@@ -140,53 +144,143 @@ d3.queue()
                         .style("top", (d3.event.pageY+10)+"px")
                         .style("left", (d3.event.pageX-55)+"px");
 
-                  //  d3.select(this).attr('r', radius * 1.5);
+                    d3.select(this).attr('r', 15);
                 })
                 .on('mouseout touchend', function(d) {
                     div.transition()
                         .duration(250)
                         .style("opacity", 0);
-                 //   d3.select(this).attr('r', radius);
+                    d3.select(this).attr('r', 10);
                 });
 
             /***
-             * Line Chart
+             * Line Charts
              */
-            var xTempScale = d3.scaleTime()
-                .range([0, screen_width]);
-            xTempScale.domain(d3.extent(temps_west, d3.f('date')));
 
-            var yTempScale =  d3.scaleLinear()
-                .range([0, height]);
-            yTempScale.domain([d3.max(temps_west, function(d) { return d.value.value; }), 0]);
+            // Regional temps by month
+            lineChart({
+                svg: temp_svg,
+                data: temps_west,
+                xValue: 'date',
+                yValue: 'value',
+                selector: 'temp',
+                type: 'degrees',
+                color: 'steelblue'
+            });
 
-            var xTempAxis = d3.axisBottom()
-                .scale(xTempScale)
-                .tickFormat(d3.timeFormat('%B'));
+            // Regional precip by month
+            lineChart({
+                svg: precip_svg,
+                data: precip_west,
+                xValue: 'date',
+                yValue: 'actual',
+                selector: 'precip',
+                type: 'inches',
+                color: 'firebrick'
+            });
 
-            var yTempAxis = d3.axisLeft()
-                .scale(yTempScale);
 
-            temp_svg.attr("height", height + margins.top + margins.bottom)
-                .attr("width", screen_width + margins.right + margins.left);
 
-            temp_svg.append("g")
-                .attr("class", "x temp axis")
-                .translate([margins.left, height + margins.top]);
+            function lineChart(s) {
+                var xTempScale = d3.scaleTime()
+                    .range([0, screen_width]);
+                xTempScale.domain(d3.extent(s.data, d3.f(s.xValue)));
 
-            d3.select("g.x.temp").call(xTempAxis);
+                var yTempScale =  d3.scaleLinear()
+                    .range([0, height]);
+                yTempScale.domain([d3.max(s.data, function(d) { return d.value[s.yValue]; }), 0]);
 
-            temp_svg.append("g")
-                .attr("class", "y temp axis")
-                .translate([margins.left, margins.top]);
+                var xTempAxis = d3.axisBottom()
+                    .scale(xTempScale)
+                    .tickFormat(d3.timeFormat('%B'));
 
-            d3.select("g.y.temp").call(yTempAxis);
+                var yTempAxis = d3.axisLeft()
+                    .scale(yTempScale);
 
-            var temp_line = lineGenerator(xTempScale, yTempScale, 'date', 'value');
+                s.svg.attr("height", height + margins.top + margins.bottom)
+                    .attr("width", screen_width + margins.right + margins.left);
 
-            temp_svg = appendPath(temp_svg, "temp_line", "steelblue");
-            drawPath("#temp_line", temp_line, temps_west);
-            focusHover(temp_svg, temps_west, "#temp", "degrees");
+                s.svg.append("g")
+                    .attr("class", "x " + s.selector + " axis")
+                    .translate([margins.left, height + margins.top]);
+
+                d3.select("g.x." + s.selector).call(xTempAxis);
+
+                s.svg.append("g")
+                    .attr("class", "y " + s.selector + " axis")
+                    .translate([margins.left, margins.top]);
+
+                d3.select("g.y." + s.selector).call(yTempAxis);
+
+                var temp_line = lineGenerator(xTempScale, yTempScale, s.xValue, s.yValue);
+
+                s.svg = appendPath(s.svg, s.selector + "_line", s.color);
+                drawPath("#" + s.selector + "_line", temp_line, s.data);
+                focusHover(s.svg, s.data, "#" + s.selector, s.type);
+
+                function focusHover(chart, data, selector, type) {
+                    var bisectDate = d3.bisector(function(d) { return d.date; }).right;
+                    var focus = chart.append("g")
+                        .attr("class", "focus")
+                        .style("display", "none");
+
+                    focus.append("line")
+                        .attr("class", "y0")
+                        .attrs({
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2:height
+
+                        });
+
+                    chart.append("rect")
+                        .attr("class", "overlay")
+                        .attr("width", screen_width)
+                        .attr("height", height)
+                        .on("mouseover touchstart", function() { focus.style("display", null); })
+                        .on("mouseout touchend", function() {
+                            focus.style("display", "none");
+                            div.transition()
+                                .duration(250)
+                                .style("opacity", 0);
+                        })
+                        .on("mousemove touchmove", mousemove)
+                        .translate([margins.left, margins.top]);
+
+                    function mousemove() {
+                        var x0 = xTempScale.invert(d3.mouse(this)[0]),
+                            i = bisectDate(data, x0, 1),
+                            d0 = data[i - 1],
+                            d1 = data[i];
+
+                        if(d1 === undefined) d1 = Infinity;
+                        var d = x0 - d0[s.xValue] > d1[s.xValue] - x0 ? d1 : d0;
+
+                        var transform_values = [(xTempScale(d[s.xValue]) + margins.left), margins.top];
+                        d3.select(selector + " line.y0").translate(transform_values);
+
+                        div.transition()
+                            .duration(100)
+                            .style("opacity", .9);
+
+                        div.html(
+                                '<h4 class="text-center">' + monthWord(d[s.xValue].getMonth()) + '</h4>' +
+                                    '<ul class="list-unstyled"' +
+                                    '<li>Historic Avg: ' + d.value.hist_avg + ' ' + type + '</li>' +
+                                    '<li>Actual Avg: ' + d.value.actual +  ' ' + type + '</li>' +
+                                    '<li>Departure from Avg: ' + d.value.value  + ' ' + type + '</li>' +
+                                    '</ul>'
+
+                            )
+                            .style("top", (d3.event.pageY-108)+"px")
+                            .style("left", (d3.event.pageX-28)+"px");
+                    }
+
+                    return chart;
+                }
+            }
+
 
 
 
@@ -198,79 +292,26 @@ d3.queue()
                 d3.select("#state-text").text(selected_state_name);
                 state.prop("value", "");
             });
-
-            /**
-             * Add overlay circle & text
-             * @param chart
-             * @returns {CSSStyleDeclaration}
-             */
-            function focusHover(chart, data, selector, type) {
-                var focus = chart.append("g")
-                    .attr("class", "focus")
-                    .style("display", "none");
-
-                focus.append("line")
-                    .attr("class", "y0")
-                    .attrs({
-                        x1: 0,
-                        y1: 0,
-                        x2: 0,
-                        y2:height
-
-                    });
-
-                chart.append("rect")
-                    .attr("class", "overlay")
-                    .attr("width", screen_width)
-                    .attr("height", height)
-                    .on("mouseover touchstart", function() { focus.style("display", null); })
-                    .on("mouseout touchend", function() {
-                        focus.style("display", "none");
-                        div.transition()
-                            .duration(250)
-                            .style("opacity", 0);
-                    })
-                    .on("mousemove touchmove", mousemove)
-                    .translate([margins.left, margins.top]);
-
-                function mousemove() {
-                    var x0 = xTempScale.invert(d3.mouse(this)[0]),
-                        i = bisectDate(data, x0, 1),
-                        d0 = data[i - 1],
-                        d1 = data[i];
-
-                    if(d1 === undefined) d1 = Infinity;
-                    var d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-
-                    var transform_values = [(xTempScale(d.date) + margins.left), margins.top];
-                    d3.select(selector + " line.y0").translate(transform_values);
-
-                    div.transition()
-                        .duration(100)
-                        .style("opacity", .9);
-
-                    div.html(
-                            '<h4 class="text-center">' + monthWord(d.date.getMonth()) + '</h4>' +
-                                '<ul class="list-unstyled"' +
-                              //  '<li>Historical Avg: ' + monthAvg(avgs, weather_type, month) + ' ' + type + '</li>' +
-                                '<li>Historic Avg: ' + d.value.hist_avg + ' ' + type + '</li>' +
-                                '<li>Actual Avg: ' + d.value.actual + '</li>' +
-                                '<li>Departure from Avg: ' + d.value.value  + ' ' + type + '</li>' +
-                                '</ul>'
-
-                        )
-                        .style("top", (d3.event.pageY-108)+"px")
-                        .style("left", (d3.event.pageX-28)+"px");
-                }
-
-                return chart;
-            }
         });
 
         var rows = d3.selectAll('.row');
         rows.classed('opaque', false);
         rows.classed('hide', false);
         d3.selectAll('#load').classed('hide', true);
+
+
+        function tempRollup(data) {
+             return d3.nest()
+                .key(function(d) { return d.month; })
+                .rollup(function(values) {
+                    return {
+                        hist_avg: num_format(d3.mean(values, function(d) { return d.value - d.anomaly; })),
+                        actual: num_format(d3.mean(values, function(d) { return d.value; })),
+                        value: num_format(d3.mean(values, function(d) {return d.anomaly; }))
+                    }
+                })
+                .entries(data);
+        }
 
 
 

@@ -55,15 +55,20 @@ h1 {
     stroke: none;
 }
 
-#temp .axis path,
-#temp .axis line {
+.graph-line .axis path,
+.graph-line .axis line {
     stroke: white;
+    fill: none;
 }
 
-#temp_line {
+#temp_line, #precip_line {
     fill: none;
-    stroke: steelblue;
+    stroke: firebrick;
     stroke-width: 2;
+}
+
+#precip_line {
+    stroke: steelblue;
 }
 
 .overlay {
